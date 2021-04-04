@@ -76,17 +76,6 @@ rm.colrowNA <- function(X){
 
 #================================================================================================================================
 
-rm.allrowNA2 <- function(X) { 
-  
-  if(inherits(X, "list")){
-    
-    lapply(X, function(i) if(NROW(i) != 0) Filter(NROW, i[rowSums(is.na(i) | i == "") != ncol(i), , drop = FALSE]) else Filter(NROW, i))
-    
-  } else { X[rowSums(is.na(X) | X == "") != ncol(X), , drop = FALSE] }
-} 
-
-#================================================================================================================================
-
 sdif <- function(n = NA, mpre = NA, mpos = NA, sdpre = NA, sdpos = NA, r = NA, t.pair = NA, df = NA,
                  sdp = NA){
   
@@ -127,93 +116,6 @@ reget <- function(List, what){
   if(length(res) == 0) NULL else res
 }
 
-
-#===============================================================================================================================
-
-
-get.uni <- function(data, what){
-  
-  data$study.name <- trimws(data$study.name)
-  m <- split(data, data$study.name)
-  m <- Filter(NROW, rm.allrowNA2(m)) 
-  
-  G <- substitute(what)
-  E <- quote(x$x)
-  E[[3]] <- G[[2]]
-  G[[2]] <- E
-  
-  f <- sapply(m, function(x) sum(eval(G)) == nrow(x))
-  
-  h <- m[names(f)[f]]
-  
-  res <- Filter(NROW, h)
-  
-  if(length(res) == 0) NULL else res
-}
-
-
-#===============================================================================================================================
-
-
-get.gen <- function(data, what){
-  
-  s <- substitute(what)  
-  data$study.name <- trimws(data$study.name)
-  m <- split(data, data$study.name)
-  m <- Filter(NROW, rm.allrowNA2(m)) 
-  
-  h <- lapply(m, function(x) do.call("subset", list(x, s)))
-  
-  res <- Filter(NROW, h)
-  
-  if(length(res) == 0) NULL else res
-}
-
-#===============================================================================================================================
-
-find.stud <- function(data, what, timevar = TRUE){
-  
-  s <- substitute(what)
-  data$study.name <- trimws(data$study.name)
-  if(!timevar) { unique(as.vector(subset(data, eval(s))$study.name))
-    
-  } else {
-    chep <- sort(unique(na.omit(data$time)))
-    G <- lapply(chep, function(x) bquote(.(s) & time == .(x)))
-    setNames(lapply(seq_along(G), function(j) unique(as.vector(subset(data, eval(G[[j]]))$study.name))), as.character(chep))
-  }
-}       
-
-#===============================================================================================================================
-
-find.miss <- function(data, space = FALSE, all = FALSE){    
-  
-  res <- Filter(length, lapply(data, function(x) which(if(!space & !all) is.na(x) else if(space & !all) x == "" else is.na(x) | x == "")))
-  if(length(res) == 0) NA else res
-}                    
-
-#===============================================================================================================================
-
-mod.level <- function(data, what){
-  
-  sort(unique(na.omit(unlist(data[paste0(substitute(what))]))))
-  
-}
-
-#===============================================================================================================================
-
-mods.level <- function(data){
-  
-  f <- function(data, what) sort(unique(na.omit(unlist(data[what]))))
-  
-  ar <- c(formalArgs(d.prepos)[-c(21, 22)], c("dint", "SE", "id"))
-  
-  dot.names <- names(data)[!names(data) %in% ar]
-  
-  setNames(lapply(seq_along(dot.names), function(i) f(data = data, what = dot.names[i])), dot.names)
-}                  
-
-
 #===============================================================================================================================
 
 dit <- Vectorize(function(dppc, dppt, nc, nt, rev.sign = FALSE){
@@ -238,15 +140,15 @@ dit <- Vectorize(function(dppc, dppt, nc, nt, rev.sign = FALSE){
 #================================================================================================================================
 
 
-handle_errors <- function(res, just_msg = FALSE) {
+handle_dint_errors <- function(res, just_msg = FALSE) {
   
   dat_obj <- data.frame(control = sapply(res[[1]][[1]], nrow), treatment = sapply(res[[2]][[1]], nrow))
   
   if(any(dat_obj == 0)){
     if(!any(rowSums(dat_obj == 0) == 1)){
       
-      message(paste("Note: Study",dQuote(toString(names(res$tlist))),
-                    "missing some posttests/outcomes/control groups. Check 'post','outcome','control' columns."))
+      message(paste("Note:",dQuote(toString(names(res$tlist))),
+                    "missing some posttests/outcomes/control groups.Check 'post','outcome','control' columns."))
       
       if(!just_msg){ 
         return(
@@ -258,11 +160,11 @@ handle_errors <- function(res, just_msg = FALSE) {
       
       if(!just_msg){   
         
-        stop(paste("Study",dQuote(toString(names(res$tlist))),"has 'post','outcome','control' wrongly coded for its 'control' & 'treatment' rows."), call. = FALSE)
+        stop(paste(dQuote(toString(names(res$tlist))),"has 'post','outcome','control' wrongly coded for its 'control' & 'treatment' rows."), call. = FALSE)
         
       } else {
         
-        message(paste("Error: Study",dQuote(toString(names(res$tlist))),"has 'post','outcome','control' wrongly coded for its 'control' & 'treatment' rows."))  
+        message(paste("Error:",dQuote(toString(names(res$tlist))),"has 'post','outcome','control' wrongly coded for its 'control' & 'treatment' rows."))  
       }
     }
   } else {
@@ -272,7 +174,7 @@ handle_errors <- function(res, just_msg = FALSE) {
     
     if(length(i1) == 1) {
       
-      message(paste("Note: Study",dQuote(toString(names(res$tlist))),"missing some posttests/outcomes/controls perhaps in its",i1, "row(s)."))
+      message(paste("Note:",dQuote(toString(names(res$tlist))),"missing some posttests/outcomes/controls perhaps in its",i1, "row(s)."))
       
       if(!just_msg){ 
         return(
@@ -284,11 +186,11 @@ handle_errors <- function(res, just_msg = FALSE) {
       
       if(!just_msg){   
         
-        stop(paste("Study",dQuote(toString(names(res$tlist))),"has posttests/outcomes/controls wrongly coded for its 'control' & 'treatment' rows."), call. = FALSE)
+        stop(paste(dQuote(toString(names(res$tlist))),"has posttests/outcomes/controls wrongly coded for its 'control' & 'treatment' rows."), call. = FALSE)
         
       } else {
         
-        message(paste("Error: Study",dQuote(toString(names(res$tlist))),"has posttests/outcomes/controls wrongly coded for its 'control' & 'treatment' rows."))  
+        message(paste("Error:",dQuote(toString(names(res$tlist))),"has posttests/outcomes/controls wrongly coded for its 'control' & 'treatment' rows."))  
       }
       
     } else {
@@ -300,7 +202,7 @@ handle_errors <- function(res, just_msg = FALSE) {
         ) 
       } else {
         
-        cat(paste("OK: No coding issues in study",dQuote(toString(names(res$tlist))),"detected.\n"))
+        cat(paste("OK: No dint coding issues in",dQuote(toString(names(res$tlist))),"detected.\n"))
       }
     }
   }
@@ -320,7 +222,7 @@ ctlist_maker <- function(m, just_msg = FALSE){
       x[x$control == i & x$post == p & x$outcome == o, , drop = FALSE])),
     inp$post, inp$outcome))), c("clist", "tlist"))
   
-  handle_errors(res, just_msg = just_msg)
+  handle_dint_errors(res, just_msg = just_msg)
 }
 
 #=============================================================================================================================
@@ -360,7 +262,7 @@ d.prepos <- function(d.pair = NA, study.name = NA, group.name = NA, n = NA, mdif
   
   out <- data.frame(d, group.name, n, sdif, r, rev.sign, post, control, outcome, time, ...)
   
-  if(all(is.na(out$d))) stop("insufficient info. to calculate effect size(s).", call. = FALSE)
+  if(any(is.na(out$d))) stop("insufficient info. to calculate effect size(s).", call. = FALSE)
   
   return(out) 
 }
@@ -415,12 +317,8 @@ get_d_prepos <- function(data, m, ar, dot.names){
 #==========================================================================================================================================
 
 
-d_prepo <- function(data = NULL)
+d_prepo <- function(data = NULL, ar, dot.names)
 {
-  
-  ar <- formalArgs(d.prepos)[-c(21:22)]
-  
-  dot.names <- names(data)[!names(data) %in% ar]
   
   args <- unclass(data[c(ar, dot.names)])
   
@@ -433,23 +331,86 @@ d_prepo <- function(data = NULL)
 #==========================================================================================================================================
 
 
-test.sheet <- function(data, L, metaset = FALSE){
+handle_prepos_errors <- function(data, ar, dot.names, check_sheet = TRUE){
   
-  f <- function(number){
+  L <- split(data, data$study.name)  
+  
+  
+  f1 <- function(number){
     
     ns <- names(L)[number]
     
-    z <- try(d_prepo(L[[number]]), silent = TRUE)
+    z <- try(d_prepo(L[[number]], ar, dot.names), silent = TRUE)
     
-    if(inherits(z, "try-error")) message("Error: pre-post coding issues in: *", toString(dQuote(ns)), "*") else cat(paste0(if(metaset)"" else "Ok: ","No pre-post coding problem in ", toString(dQuote(ns)), "\n"))
+    
+    if(inherits(z, "try-error")) { 
+      
+      Attrib <- TRUE
+    message("Error: pre-post coding issues in ", toString(dQuote(ns)), " detected. Check descriptive columns ('n','mpre'...).")
+    
+      } else {
+        
+      Attrib <- FALSE
+    cat(paste("Ok: No pre-post coding issues in", toString(dQuote(ns)), "detected.\n"))
+      }
+    
+    y <- NA
+    attr(y, "message") <- Attrib
+    return(y)
   }
-  invisible(lapply(seq_along(L), function(i) f(i)))
+  
+  
+  f2 <- function(number){
+    
+    ns <- names(L)[number]
+    
+    z <- try(d_prepo(L[[number]], ar, dot.names), silent = TRUE)
+    
+    if(inherits(z, "try-error")) { 
+      
+      stop("pre-post coding issues in ", toString(dQuote(ns)), " detected. Check descriptive columns ('n','mpre'...).", call. = FALSE)
+    }    
+}  
+  
+  
+  if(check_sheet){
+  
+  res <- invisible(lapply(seq_along(L), function(i) f1(i)))
+  
+  any(sapply(res, attr, "message"))
+ }  
+  else {
+    
+    invisible(lapply(seq_along(L), function(i) f2(i)))
+  } 
+  
 }
 
 
 
 #==========================================================================================================================================
 
+check_sheet <- function(data, m, ar, dot.names){
+  
+  message(paste("\nError analysis of pre-post effects coding:\n"))
+  
+  bad_first_check <- handle_prepos_errors(data, ar, dot.names)
+  
+  if(!bad_first_check){
+  
+  L <- get_d_prepos(data, m, ar, dot.names)  
+    
+  message(paste("\nError analysis of dints effects coding:\n"))    
+  
+  invisible(lapply(names(L), function(i) ctlist_maker(L[i], just_msg = TRUE)))
+  } else {
+    
+    message(paste("\nError analysis of dints effects coding stopped due to the 'Error' found above."))
+  }
+}
+
+
+#==========================================================================================================================================
 
 dint <- function(data = NULL, check_sheet = FALSE)
 {
@@ -460,33 +421,27 @@ dint <- function(data = NULL, check_sheet = FALSE)
   
   
   m <- split(data, data$study.name)
-    
-  if(is.null(reget(m, control))) stop("Required 'control/comparison' group not found.", call. = FALSE)  
   
   ar <- formalArgs(d.prepos)[-c(3,21:22)]
   
-  dot.names <- names(data)[!names(data) %in% ar]
+  all_names_ <- names(data)
   
-  L <- get_d_prepos(data, m, ar, dot.names)
+  dot.names <- all_names_[!all_names_ %in% ar]
+  
+  if(is.null(reget(m, control))) stop("Required 'control/comparison' group not found.", call. = FALSE)
   
   
-  if(check_sheet){ 
+  if(check_sheet){
     
-    message(paste("\nError analysis of raw coding sheet:\n"))
-    
-    ur <- try(test.sheet(data, m, metaset = TRUE), silent = TRUE)
-    
-    if(inherits(ur, "try-error")) { stop("\nIncomplete data: check descrptive columns ('n', 'mpre' etc.)", call. = FALSE) 
-      
-    } else {
-      
-      message(paste("\nError analysis of dints dataset:\n"))    
-      
-      invisible(lapply(names(L), function(i) ctlist_maker(L[i], just_msg = TRUE)))
-    }
+   check_sheet(data, m, ar, dot.names)
+  
   } 
   
   else {
+    
+    handle_prepos_errors(data, ar, dot.names, check_sheet = FALSE)
+    
+    L <- get_d_prepos(data, m, ar, dot.names)
     
     res <- setNames(lapply(names(L), function(i) get_dint(L[i], dot.names)), names(L))
     
@@ -497,4 +452,5 @@ dint <- function(data = NULL, check_sheet = FALSE)
     out[c("studyID","esID", setdiff(names(out), c("studyID","esID")))]
   }
 }
-
+                           
+                           
