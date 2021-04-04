@@ -239,7 +239,7 @@ d.prepos <- function(d.pair = NA, study.name = NA, group.name = NA, n = NA, mdif
   autoreg <- ifelse(is.na(autoreg), FALSE, autoreg)
   control <- ifelse(is.na(control), FALSE, control)
   
-  if(anyNA(control) || anyNA(post) || anyNA(outcome)) stop("'post','outcome', or 'control' missing in the EXCEL coding sheet.", call. = FALSE)
+  if(anyNA(post) || anyNA(outcome)) stop("'post','outcome', or 'control' missing in the EXCEL coding sheet.", call. = FALSE)
   
   d <- d.pair
   df <- df.pair
