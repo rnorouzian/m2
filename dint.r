@@ -460,12 +460,12 @@ dint <- function(data = NULL, check_sheet = FALSE)
   
   
   m <- split(data, data$study.name)
+    
+  if(is.null(reget(m, control))) stop("Required 'control/comparison' group not found.", call. = FALSE)  
   
   ar <- formalArgs(d.prepos)[-c(3,21:22)]
   
   dot.names <- names(data)[!names(data) %in% ar]
-  
-  if(is.null(reget(m, control))) stop("Required 'control/comparison' group not found.", call. = FALSE)
   
   L <- get_d_prepos(data, m, ar, dot.names)
   
