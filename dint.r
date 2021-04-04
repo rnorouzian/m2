@@ -147,8 +147,8 @@ handle_dint_errors <- function(res, just_msg = FALSE) {
   if(any(dat_obj == 0)){
     if(!any(rowSums(dat_obj == 0) == 1)){
       
-      message(paste("Note:",dQuote(toString(names(res$tlist))),
-                    "missing some posttests/outcomes/control groups.Check 'post','outcome','control' columns."))
+      message("Note: ",dQuote(toString(names(res$tlist))),
+                    " missing some posttests/outcomes/control groups.Check 'post','outcome','control' columns.")
       
       if(!just_msg){ 
         return(
@@ -164,7 +164,7 @@ handle_dint_errors <- function(res, just_msg = FALSE) {
         
       } else {
         
-        message(paste("Error:",dQuote(toString(names(res$tlist))),"has 'post','outcome','control' wrongly coded for its 'control' & 'treatment' rows."))  
+        message("Error: ",dQuote(toString(names(res$tlist)))," has 'post','outcome','control' wrongly coded for its 'control' & 'treatment' rows.")  
       }
     }
   } else {
@@ -174,7 +174,7 @@ handle_dint_errors <- function(res, just_msg = FALSE) {
     
     if(length(i1) == 1) {
       
-      message(paste("Note:",dQuote(toString(names(res$tlist))),"missing some posttests/outcomes/controls perhaps in its",i1, "row(s)."))
+      message("Note: ",dQuote(toString(names(res$tlist)))," missing some posttests/outcomes/controls perhaps in its ",i1, " row(s).")
       
       if(!just_msg){ 
         return(
@@ -186,11 +186,11 @@ handle_dint_errors <- function(res, just_msg = FALSE) {
       
       if(!just_msg){   
         
-        stop(paste(dQuote(toString(names(res$tlist))),"has posttests/outcomes/controls wrongly coded for its 'control' & 'treatment' rows."), call. = FALSE)
+        stop(dQuote(toString(names(res$tlist)))," has posttests/outcomes/controls wrongly coded for its 'control' & 'treatment' rows.", call. = FALSE)
         
       } else {
         
-        message(paste("Error:",dQuote(toString(names(res$tlist))),"has posttests/outcomes/controls wrongly coded for its 'control' & 'treatment' rows."))  
+        message("Error: ",dQuote(toString(names(res$tlist)))," has posttests/outcomes/controls wrongly coded for its 'control' & 'treatment' rows.")  
       }
       
     } else {
