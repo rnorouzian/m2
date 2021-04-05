@@ -1,7 +1,8 @@
+
 Break = "<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>\n"
 
-notice = "   \"dint\", An R program for calculation of SMD effect size \n     from complex longitudinal Second Language Research.
-    Copyright (C) 2020-present  Reza Norouzian, rnorouzian@gmail.com\n"
+notice = "   \"dint\", An R program for calculation of SMCD effect size \n     from complex longitudinal Second Language Research.
+    Copyright (C) 2020-present Reza Norouzian, rnorouzian@gmail.com\n"
 
 message(Break, notice, Break)
 
