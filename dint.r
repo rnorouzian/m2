@@ -413,13 +413,36 @@ check_sheet <- function(data, m, ar, dot.names){
 
 #==========================================================================================================================================
 
-dint <- function(data = NULL, check_sheet = FALSE)
-{
+make_final_output <- function(L, dot.names){
+  
+  res <- setNames(lapply(names(L), function(i) get_dint(L[i], dot.names)), names(L))
+  
+  DF <- do.call(rbind, c(Map(cbind, studyID = names(res), res), make.row.names = FALSE))
+  
+  out <- cbind(esID = seq_len(nrow(DF)), DF)
+  
+  out[c("studyID","esID", setdiff(names(out), c("studyID","esID")))]
+}
+
+
+#==========================================================================================================================================
+
+
+check_data_ <- function(data){
   
   data <- rm.allrowNA(trim(data))
   check <- "study.name" %in% names(data)
-  if(!check) stop("Add a new column titled 'study.name'.", call. = FALSE) 
+  if(!check) stop("Add a new column titled 'study.name'.", call. = FALSE)
+  return(data)
+}
+
+#==========================================================================================================================================
+
+
+dint <- function(data = NULL, check_sheet = FALSE)
+{
   
+  data <- check_data_(data)
   
   m <- split(data, data$study.name)
   
@@ -436,22 +459,13 @@ dint <- function(data = NULL, check_sheet = FALSE)
     
    check_sheet(data, m, ar, dot.names)
   
-  } 
-  
-  else {
+  } else {
     
     handle_prepos_errors(data, ar, dot.names, check_sheet = FALSE)
     
     L <- get_d_prepos(data, m, ar, dot.names)
     
-    res <- setNames(lapply(names(L), function(i) get_dint(L[i], dot.names)), names(L))
-    
-    DF <- do.call(rbind, c(Map(cbind, studyID = names(res), res), make.row.names = FALSE))
-    
-    out <- cbind(esID = seq_len(nrow(DF)), DF)
-    
-    out[c("studyID","esID", setdiff(names(out), c("studyID","esID")))]
+    make_final_output(L, dot.names)
   }
 }
-                           
-                           
+                         
