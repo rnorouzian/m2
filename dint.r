@@ -70,9 +70,8 @@ rm.allcolNA <- function(X) {
 
 rm.colrowNA <- function(X){
   
-  r <- rm.allrowNA(X)
-  rm.allcolNA(r)  
-  
+  rm.allcolNA(rm.allrowNA(X))  
+
 }                                      
 
 #================================================================================================================================
