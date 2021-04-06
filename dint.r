@@ -299,7 +299,7 @@ get_dint <- function(m, dot.names){
   
   ctlists <- ctlist_maker(m)
   
-  do.call(rbind, lapply(1:lengths(ctlists)[[1]], function(i) 
+  do.call(rbind, lapply(seq_len(unique(lengths(ctlists))), function(i) 
     dinter2(ctlists$clist[[i]], ctlists$tlist[[i]], dot.names)))
 }
 
