@@ -431,11 +431,11 @@ make_final_output <- function(data, m, ar, dot.names){
 #==========================================================================================================================================
 
 
-check_data_ <- function(data){
+check_data_ <- function(data, ar){
   
   data <- rm.allrowNA(trim_(data))
-  ok <- "study.name" %in% names(data)
-  if(!ok) stop("Add a new column titled 'study.name'.", call. = FALSE)
+  idx <- ar %in% names(data)
+  if(!all(idx)) stop("Columns ",dQuote(toString(ar[!idx])), " missing.", call. = FALSE)
   return(data)
 }
 
@@ -444,13 +444,11 @@ check_data_ <- function(data){
 
 dint <- function(data, check_sheet = FALSE){
   
-  data <- check_data_(data)
+  ar <- formalArgs(d.prepos)[-c(3,21:22)]
+    
+  data <- check_data_(data, ar)
   
   m <- split(data, data$study.name)
-  
- # if(is.null(reget(m, control))) stop("Required 'control/comparison' group not found.", call. = FALSE)
-    
-  ar <- formalArgs(d.prepos)[-c(3,21:22)]
   
   all_names_ <- names(data)
   
