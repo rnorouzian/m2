@@ -446,13 +446,13 @@ dint <- function(data = NULL, check_sheet = FALSE)
   
   m <- split(data, data$study.name)
   
+  if(is.null(reget(m, control))) stop("Required 'control/comparison' group not found.", call. = FALSE)
+    
   ar <- formalArgs(d.prepos)[-c(3,21:22)]
   
   all_names_ <- names(data)
   
   dot.names <- all_names_[!all_names_ %in% ar]
-  
-  if(is.null(reget(m, control))) stop("Required 'control/comparison' group not found.", call. = FALSE)
   
   
   if(check_sheet){
