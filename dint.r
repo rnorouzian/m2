@@ -148,7 +148,7 @@ handle_dint_errors <- function(res, just_msg = FALSE) {
     if(!any(rowSums(dat_obj == 0) == 1)){
       
       message("Note: ",dQuote(toString(names(res$tlist))),
-                    " missing some posttests/outcomes/control groups.Check 'post','outcome','control' columns.")
+                    " missing some 'post','outcome', or 'control' groups.")
       
       if(!just_msg){ 
         return(
