@@ -103,21 +103,6 @@ cfactor <- function(df) exp(lgamma(df/2)-log(sqrt(df/2)) - lgamma((df-1)/2))
 
 #===============================================================================================================================
 
-reget <- function(List, what){
-  
-  s <- substitute(what)  
-  
-  if(!inherits(List, "list")) List <- list(List)  
-  
-  h <- lapply(List, function(x) do.call("subset", list(x, s)))
-  
-  res <- Filter(NROW, h)
-  
-  if(length(res) == 0) NULL else res
-}
-
-#===============================================================================================================================
-
 dit <- Vectorize(function(dppc, dppt, nc, nt, rev.sign = FALSE){
   
   a <- dppc
