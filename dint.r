@@ -439,8 +439,7 @@ check_data_ <- function(data){
 #==========================================================================================================================================
 
 
-dint <- function(data = NULL, check_sheet = FALSE)
-{
+dint <- function(data = NULL, check_sheet = FALSE){
   
   data <- check_data_(data)
   
@@ -453,7 +452,6 @@ dint <- function(data = NULL, check_sheet = FALSE)
   all_names_ <- names(data)
   
   dot.names <- all_names_[!all_names_ %in% ar]
-  
   
   if(check_sheet){
     
