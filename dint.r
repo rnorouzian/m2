@@ -463,7 +463,7 @@ dint <- function(data = NULL, check_sheet = FALSE){
   
   } else {
     
-    make_final_output(data, m, ar, dot.names)
+   make_final_output(data, m, ar, dot.names)
   }
 }
                          
