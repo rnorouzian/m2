@@ -448,7 +448,7 @@ dint <- function(data, check_sheet = FALSE){
   
   m <- split(data, data$study.name)
   
-  if(is.null(reget(m, control))) stop("Required 'control/comparison' group not found.", call. = FALSE)
+ # if(is.null(reget(m, control))) stop("Required 'control/comparison' group not found.", call. = FALSE)
     
   ar <- formalArgs(d.prepos)[-c(3,21:22)]
   
