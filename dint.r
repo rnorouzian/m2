@@ -442,7 +442,7 @@ check_data_ <- function(data){
 #==========================================================================================================================================
 
 
-dint <- function(data = NULL, check_sheet = FALSE){
+dint <- function(data, check_sheet = FALSE){
   
   data <- check_data_(data)
   
