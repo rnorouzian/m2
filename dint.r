@@ -369,7 +369,7 @@ handle_prepos_errors <- function(data, ar, dot.names, just_msg = TRUE){
     
     if(inherits(z, "try-error")) { 
       
-      stop("pre-post coding issues in ", toString(dQuote(ns)), " detected. Check descriptive columns ('n','mpre'...).", call. = FALSE)
+    stop("pre-post coding issues in ", toString(dQuote(ns)), " detected. Check descriptive columns ('n','mpre'...).", call. = FALSE)
     }    
 }  
   
@@ -382,7 +382,7 @@ handle_prepos_errors <- function(data, ar, dot.names, just_msg = TRUE){
  }  
   else {
     
-    invisible(lapply(seq_along(L), function(i) f2(i)))
+  invisible(lapply(seq_along(L), function(i) f2(i)))
   } 
   
 }
@@ -406,7 +406,7 @@ check_sheet <- function(data, m, ar, dot.names){
   invisible(lapply(names(L), function(i) ctlist_maker(L[i], just_msg = TRUE)))
   } else {
     
-    message(paste("\nError analysis of dints effects coding stopped due to the 'Error' found above."))
+  message(paste("\nError analysis of dints effects coding stopped due to the 'Error' found above."))
   }
 }
 
