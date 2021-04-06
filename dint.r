@@ -36,7 +36,7 @@ d2t <- function(d, n1, n2 = NA){
 
 #===============================================================================================================================
 
-trim <- function(X){
+trim_ <- function(X){
   X <- setNames(X, trimws(names(X)))
   y <- sapply(names(X), function(x) is.character(as.vector(X[[x]])))
   X[y] <- lapply(X[y], trimws)
@@ -332,7 +332,7 @@ d_prepo <- function(data = NULL, ar, dot.names)
 #==========================================================================================================================================
 
 
-handle_prepos_errors <- function(data, ar, dot.names, check_sheet = TRUE){
+handle_prepos_errors <- function(data, ar, dot.names, just_msg = TRUE){
   
   L <- split(data, data$study.name)  
   
@@ -374,7 +374,7 @@ handle_prepos_errors <- function(data, ar, dot.names, check_sheet = TRUE){
 }  
   
   
-  if(check_sheet){
+  if(just_msg){
   
   res <- invisible(lapply(seq_along(L), function(i) f1(i)))
   
@@ -413,8 +413,12 @@ check_sheet <- function(data, m, ar, dot.names){
 
 #==========================================================================================================================================
 
-make_final_output <- function(L, dot.names){
+make_final_output <- function(data, m, ar, dot.names){
+    
+  handle_prepos_errors(data, ar, dot.names, just_msg = FALSE)  
   
+  L <- get_d_prepos(data, m, ar, dot.names)
+    
   res <- setNames(lapply(names(L), function(i) get_dint(L[i], dot.names)), names(L))
   
   DF <- do.call(rbind, c(Map(cbind, studyID = names(res), res), make.row.names = FALSE))
@@ -430,9 +434,9 @@ make_final_output <- function(L, dot.names){
 
 check_data_ <- function(data){
   
-  data <- rm.allrowNA(trim(data))
-  check <- "study.name" %in% names(data)
-  if(!check) stop("Add a new column titled 'study.name'.", call. = FALSE)
+  data <- rm.allrowNA(trim_(data))
+  ok <- "study.name" %in% names(data)
+  if(!ok) stop("Add a new column titled 'study.name'.", call. = FALSE)
   return(data)
 }
 
@@ -459,11 +463,7 @@ dint <- function(data = NULL, check_sheet = FALSE){
   
   } else {
     
-    handle_prepos_errors(data, ar, dot.names, check_sheet = FALSE)
-    
-    L <- get_d_prepos(data, m, ar, dot.names)
-    
-    make_final_output(L, dot.names)
+    make_final_output(data, m, ar, dot.names)
   }
 }
                          
