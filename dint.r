@@ -435,7 +435,7 @@ check_data_ <- function(data, ar){
   
   data <- rm.allrowNA(trim_(data))
   idx <- ar %in% names(data)
-  if(!all(idx)) stop("Columns ",dQuote(toString(ar[!idx])), " missing.", call. = FALSE)
+  if(!all(idx)) stop("Column(s) ",dQuote(toString(ar[!idx])), " missing.", call. = FALSE)
   return(data)
 }
 
