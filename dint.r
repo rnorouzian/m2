@@ -160,7 +160,7 @@ handle_dint_errors <- function(res, just_msg = FALSE) {
       
       if(!just_msg){   
         
-        stop(paste(dQuote(toString(names(res$tlist))),"has 'post','outcome','control' wrongly coded for its 'control' & 'treatment' rows."), call. = FALSE)
+        stop(dQuote(toString(names(res$tlist)))," has 'post','outcome','control' wrongly coded for its 'control' & 'treatment' rows.", call. = FALSE)
         
       } else {
         
@@ -186,11 +186,11 @@ handle_dint_errors <- function(res, just_msg = FALSE) {
       
       if(!just_msg){   
         
-        stop(dQuote(toString(names(res$tlist)))," has posttests/outcomes/controls wrongly coded for its 'control' & 'treatment' rows.", call. = FALSE)
+        stop(dQuote(toString(names(res$tlist)))," has 'post','outcome','control' wrongly coded for its 'control' & 'treatment' rows.", call. = FALSE)
         
       } else {
         
-        message("Error: ",dQuote(toString(names(res$tlist)))," has posttests/outcomes/controls wrongly coded for its 'control' & 'treatment' rows.")  
+        message("Error: ",dQuote(toString(names(res$tlist)))," has 'post','outcome','control' wrongly coded for its 'control' & 'treatment' rows.")  
       }
       
     } else {
@@ -202,7 +202,7 @@ handle_dint_errors <- function(res, just_msg = FALSE) {
         ) 
       } else {
         
-        cat(paste("OK: No dint coding issues in",dQuote(toString(names(res$tlist))),"detected.\n"))
+         cat(paste("OK: No dint coding issues in",dQuote(toString(names(res$tlist))),"detected.\n"))
       }
     }
   }
