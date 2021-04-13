@@ -449,3 +449,15 @@ dint <- function(data, check_sheet = FALSE){
   }
 }
                          
+
+#==========================================================================================================================================                         
+                         
+Type_of_Input_ <- c(
+  "numeric", "numeric/character",
+  "numeric/character", "numeric",
+  "numeric", "numeric","numeric",
+  "numeric","numeric", "numeric",
+  "numeric [0-1]", "logical","logical","logical",
+  "numeric","numeric","numeric",
+  "numeric","logical",
+  "numeric/character","numeric")                         
