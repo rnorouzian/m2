@@ -216,7 +216,7 @@ ctlist_maker <- function(m, just_msg = FALSE){
 d.prepos <- function(d.pair = NA, study.name = NA, group.name = NA, n = NA, mdif.pair = NA, 
                      stder.pair = NA, mpre = NA, mpos = NA, sdpre = NA, sdpos = NA, r.prepos = NA, 
                      rev.sign = FALSE, rev.group = FALSE, autoreg = FALSE, t.pair = NA, 
-                     df.pair = NA, sdif = NA, post = NA, control = NA, outcome = NA, time = NA, ...) 
+                     df.pair = NA, sdif = NA, post = NA, control = NA, outcome = NA, ...) 
 {
   
   rev.sign <- ifelse(is.na(rev.sign), FALSE, rev.sign)
@@ -245,7 +245,7 @@ d.prepos <- function(d.pair = NA, study.name = NA, group.name = NA, n = NA, mdif
   d <- ifelse(!is.na(mdif) & is.na(d) & !is.na(sdif), mdif/sdif, d)*cfactor(n-1)
   d <- ifelse(rev.group, -d, d)
   
-  out <- data.frame(d, group.name, n, sdif, r, rev.sign, post, control, outcome, time, ...)
+  out <- data.frame(d, group.name, n, sdif, r, rev.sign, post, control, outcome, ...)
   
   if(any(is.na(out$d))) stop("insufficient info. to calculate effect size(s).", call. = FALSE)
   
@@ -319,7 +319,6 @@ d_prepo <- function(data = NULL, ar, dot.names)
 handle_prepos_errors <- function(data, ar, dot.names, just_msg = TRUE){
   
   L <- split(data, data$study.name)  
-  
   
   f1 <- function(number){
     
