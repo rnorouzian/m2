@@ -429,7 +429,7 @@ check_data_ <- function(data, ar){
 
 dint <- function(data, check_sheet = FALSE){
   
-  ar <- formalArgs(d.prepos)[-c(3,21)]
+  ar <- formalArgs(d.prepos)[-c(3,21:22)] # [-c(3,21)] # 
     
   data <- check_data_(data, ar)
   
