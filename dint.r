@@ -421,6 +421,8 @@ check_data_ <- function(data, ar){
   data <- rm.allrowNA(trim_(data))
   idx <- ar %in% names(data)
   if(!all(idx)) stop("Column(s) ",toString(dQuote(ar[!idx])), " missing.", call. = FALSE)
+  if(!is.numeric(data$post) || !is.numeric(data$outcome)) stop("'post' & 'outcome' must be a numeric value.", call. = FALSE)
+  if(!anyNA(data$r.prepos) & any(data$r.prepos >= 1 & data$r.prepos <= 0)) stop("'r.prepos' should be bet. 0 & 1.", call. = FALSE)  
   return(data)
 }
 
@@ -429,7 +431,7 @@ check_data_ <- function(data, ar){
 
 dint <- function(data, check_sheet = FALSE){
   
-  ar <- formalArgs(d.prepos)[-c(3,21:22)] # [-c(3,21)] # 
+  ar <- formalArgs(d.prepos)[-c(3,21)] # [-c(3,21:22)] # 
     
   data <- check_data_(data, ar)
   
