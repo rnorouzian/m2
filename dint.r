@@ -330,7 +330,7 @@ handle_prepos_errors <- function(data, ar, dot.names, just_msg = TRUE){
     if(inherits(z, "try-error")) { 
       
       Attrib <- TRUE
-    message("Error: pre-post coding issues in ", toString(dQuote(ns)), " detected. Check descriptive columns ('n','mpre'...).")
+    message("Error: pre-post coding issues in ", toString(dQuote(ns)), " detected. Check all the columns ('n','mpre'...).")
     
       } else {
         
@@ -352,7 +352,7 @@ handle_prepos_errors <- function(data, ar, dot.names, just_msg = TRUE){
     
     if(inherits(z, "try-error")) { 
       
-    stop("pre-post coding issues in ", toString(dQuote(ns)), " detected. Check descriptive columns ('n','mpre'...).", call. = FALSE)
+    stop("pre-post coding issues in ", toString(dQuote(ns)), " detected. Check all the columns ('n','mpre'...).", call. = FALSE)
     }    
 }  
   
