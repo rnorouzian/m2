@@ -459,4 +459,4 @@ Type_of_Input_ <- c(
   "numeric [0-1]", "logical","logical","logical",
   "numeric","numeric","numeric",
   "numeric","logical",
-  "numeric","numeric", "numeric/character")                         
+  "numeric", "numeric/character")                         
