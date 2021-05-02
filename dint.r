@@ -436,7 +436,7 @@ dint <- function(data, check_sheet = FALSE){
   
   all_names_ <- names(data)
   
-  dot.names <- all_names_[!all_names_ %in% ar]
+  dot.names <- c(all_names_[!all_names_ %in% ar], "post")
   
   if(check_sheet){
     
