@@ -420,7 +420,7 @@ check_data_ <- function(data, ar){
   data <- rm.allrowNA(trim_(data))
   idx <- ar %in% names(data)
   if(!all(idx)) stop("Column(s) ",toString(dQuote(ar[!idx])), " missing.", call. = FALSE)
-  data <- transform(data, post_id = post)
+  data <- transform(data, post_id = post, n_outcome = ave(outcome, study.name, FUN = max))
   return(data)
 }
 
