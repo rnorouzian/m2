@@ -1,4 +1,4 @@
-study.name,group.name,n,mpre,sdpre,mpos,sdpos,post,control,outcome,time_wk,treats
+study.name,group,n,mpre,sdpre,mpos,sdpos,post,control,outcome,time_wk,treats
 Diab_b,1,21,0.21,0.28,0.22,0.44,1,FALSE,1,0,1
 Diab_b,1,21,0.21,0.28,0.08,0.11,2,FALSE,1,8,1
 Diab_b,1,21,1.61,1.5,0.87,0.82,1,FALSE,2,0,1
