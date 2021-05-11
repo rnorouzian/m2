@@ -491,3 +491,35 @@ mask_ <- function(data, what, full = FALSE){
   return(data)
 }
                          
+#================================================================================
+                     
+qcohen <- function(p, dbase = 0, n1, n2 = NA, lower.tail = TRUE, log.p = FALSE){
+  
+  q <- Vectorize(function(p, dbase, n1, n2, lower.tail, log.p){
+    
+    N <- ifelse(is.na(n2), n1, (n1 * n2)/(n1 + n2))
+    df <- ifelse(is.na(n2), n1 - 1, (n1 + n2) - 2)
+    ncp <- dbase*sqrt(N)
+    
+    qt(p, df, ncp, lower.tail = lower.tail, log.p = log.p)/sqrt(N)
+  })
+  q(p = p, dbase = dbase, n1 = n1, n2 = n2, lower.tail = lower.tail, log.p = log.p)
+}
+
+    
+#=======================================================================================================================================
+
+
+pcohen <- function(q, dbase = 0, n1, n2 = NA, lower.tail = TRUE, log.p = FALSE){
+  
+  p <- Vectorize(function(q, dbase, n1, n2, lower.tail, log.p){
+  
+  N <- ifelse(is.na(n2), n1, (n1 * n2)/(n1 + n2))
+  df <- ifelse(is.na(n2), n1 - 1, (n1 + n2) - 2)
+  ncp <- dbase*sqrt(N)
+  
+  pt(q*sqrt(N), df, ncp, lower.tail = lower.tail, log.p = log.p)
+})
+p(q = q, dbase = dbase, n1 = n1, n2 = n2, lower.tail = lower.tail, log.p = log.p)
+}                     
+                     
