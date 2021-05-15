@@ -125,6 +125,36 @@ dit <- Vectorize(function(dppc, dppt, nc, nt, rev.sign = FALSE){
 #================================================================================================================================
 
 
+handle_mpre_errors <- function(data, just_msg = TRUE){
+
+out <- invisible(sapply(split(data, data$study.name), function(x) {
+  if (var(x[,'post']) > 0) {
+    r <- all(sapply(unique(x[,'outcome']), function(i)
+      var(x[x[,'outcome'] == i & x[,'control'], 'mpre']) > 0))
+  } else {
+    r <- FALSE
+  }
+  if(r) {
+    
+    if(just_msg) {
+      
+      message(sprintf("Error: 'mpre' in '%s' for 'control' and 'outcome' rows are wrongly coded.", x[,'study.name'][1]))} else {
+      
+      stop(sprintf("'mpre' in '%s' for 'control' and 'outcome' rows are wrongly coded.", x[,'study.name'][1]), call. = FALSE)
+    }
+  } else if(just_msg) { 
+    
+  cat(paste("OK: No multi-outcome coding issues in",dQuote(toString(x[,'study.name'][1])),"detected.\n")) }
+  
+  return(r)
+}))
+
+if(just_msg) any(out)
+}           
+           
+           
+#================================================================================================================================
+           
 handle_dint_errors <- function(res, just_msg = FALSE) {
   
   dat_obj <- data.frame(control = sapply(res[[1]][[1]], nrow), treatment = sapply(res[[2]][[1]], nrow))
@@ -376,20 +406,31 @@ handle_prepos_errors <- function(data, ar, dot.names, just_msg = TRUE){
 
 check_sheet <- function(data, m, ar, dot.names){
   
+  message(paste("\nError analysis of multi-outcome study coding:\n"))
+  
+  bad_1st_check <- handle_mpre_errors(data)
+  
+  if(!bad_1st_check){
+  
   message(paste("\nError analysis of pre-post effects coding:\n"))
   
-  bad_first_check <- handle_prepos_errors(data, ar, dot.names)
-  
-  if(!bad_first_check){
-  
-  L <- get_d_prepos(data, m, ar, dot.names)  
+  bad_2nd_check <- handle_prepos_errors(data, ar, dot.names)
     
-  message(paste("\nError analysis of dints effects coding:\n"))    
+  } else { bad_2nd_check <- TRUE
   
-  invisible(lapply(names(L), function(i) ctlist_maker(L[i], just_msg = TRUE)))
+  message("\nError analysis of pre-post effects coding stopped due to the 'Error' found above.")}
+  
+  
+  if(!bad_2nd_check){
+    
+    L <- get_d_prepos(data, m, ar, dot.names)  
+    
+    message("\nError analysis of dints effects coding:\n")    
+    
+    invisible(lapply(names(L), function(i) ctlist_maker(L[i], just_msg = TRUE)))
   } else {
     
-  message(paste("\nError analysis of dints effects coding stopped due to the 'Error' found above."))
+    message("\nError analysis of dints effects coding stopped due to the 'Error' found above.")
   }
 }
 
@@ -397,11 +438,13 @@ check_sheet <- function(data, m, ar, dot.names){
 #==========================================================================================================================================
 
 make_final_output <- function(data, m, ar, dot.names){
-    
+  
+  handle_mpre_errors(data, just_msg = FALSE)
+  
   handle_prepos_errors(data, ar, dot.names, just_msg = FALSE)  
   
   L <- get_d_prepos(data, m, ar, dot.names)
-    
+  
   res <- setNames(lapply(names(L), function(i) get_dint(L[i], dot.names)), names(L))
   
   DF <- do.call(rbind, c(Map(cbind, studyID = names(res), res), make.row.names = FALSE))
@@ -420,7 +463,8 @@ check_data_ <- function(data, ar){
   data <- rm.allrowNA(trim_(data))
   idx <- ar %in% names(data)
   if(!all(idx)) stop("Column(s) ",toString(dQuote(ar[!idx])), " missing.", call. = FALSE)
-  data <- transform(data, post_id = post, n_outcome = ave(outcome, study.name, FUN = max))
+  data <- transform(data, post_id = post, n_outcome = ave(outcome, study.name, FUN = max),
+                    control = ifelse(is.na(control), FALSE, control))
   return(data)
 }
 
