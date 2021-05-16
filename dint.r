@@ -138,7 +138,9 @@ out <- invisible(sapply(split(data, data$study.name), function(x) {
     
     if(just_msg) {
       
-      message(sprintf("Error: 'mpre' in '%s' for 'control' and 'outcome' rows are wrongly coded.", x[,'study.name'][1]))} else {
+      message(sprintf("Error: 'mpre' in '%s' for 'control' and 'outcome' rows are wrongly coded.", x[,'study.name'][1]))
+    
+    } else {
       
       stop(sprintf("'mpre' in '%s' for 'control' and 'outcome' rows are wrongly coded.", x[,'study.name'][1]), call. = FALSE)
     }
