@@ -124,7 +124,15 @@ dit <- Vectorize(function(dppc, dppt, nc, nt, rev.sign = FALSE){
 
 #================================================================================================================================
 
+drop.col <- function(data, what){
+  
+    i1 <- !names(data) %in% what
+    setNames(data[i1], names(data)[i1])
+}           
 
+#================================================================================================================================
+           
+           
 handle_mpre_errors <- function(data, just_msg = TRUE){
 
 out <- invisible(sapply(split(data, data$study.name), function(x) {
