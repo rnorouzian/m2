@@ -259,7 +259,6 @@ d.prepos <- function(d.pair = NA, study.name = NA, group.name = NA, n = NA, mdif
                      df.pair = NA, sdif = NA, post = NA, control = NA, outcome = NA, ...) 
 {
   
-  rev.sign <- ifelse(is.na(rev.sign), FALSE, rev.sign)
   rev.group <- ifelse(is.na(rev.group), FALSE, rev.group)
   autoreg <- ifelse(is.na(autoreg), FALSE, autoreg)
   
