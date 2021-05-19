@@ -465,14 +465,16 @@ make_final_output <- function(data, m, ar, dot.names){
 
 #==========================================================================================================================================
 
-
-check_data_ <- function(data, ar){
+check_data_ <- function(data, ar, smd = FALSE){
   
   data <- rm.allrowNA(trim_(data))
   idx <- ar %in% names(data)
   if(!all(idx)) stop("Column(s) ",toString(dQuote(ar[!idx])), " missing.", call. = FALSE)
-  data <- transform(data, post_id = post, n_outcome = ave(outcome, study.name, FUN = max),
-                    control = ifelse(is.na(control), FALSE, control))
+  data <- transform(data, post_id = post, outcome_id = outcome, n_outcome = ave(outcome, study.name, FUN = max),
+                    control = ifelse(is.na(control), FALSE, control),
+                    sign_. = ifelse(is.na(rev.sign), FALSE, rev.sign))
+  
+  if(smd & anyNA(data$group.name)) stop("For SMD effect sizes, 'group.name' must be coded for.", call. = FALSE)
   return(data)
 }
 
