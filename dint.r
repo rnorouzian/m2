@@ -448,6 +448,7 @@ handle_prepos_errors <- function(data, ar, dot.names, just_msg = TRUE, smd = FAL
 
 #==========================================================================================================================================
 
+                     
 check_sheet <- function(data, m, ar, dot.names, smd = FALSE){
   
   message(paste("\nError analysis of multi-outcome study coding:\n"))
@@ -462,23 +463,22 @@ check_sheet <- function(data, m, ar, dot.names, smd = FALSE){
     
   } else { bad_2nd_check <- TRUE
   
-  message("\nError analysis of pre-post effects coding stopped due to the 'Error' found above.")}
+  message("\nError analysis of stage 2 coding stopped due to the 'Error' found above.")}
   
   
   if(!bad_2nd_check){
     
     L <- get_d_prepos(data, m, ar, dot.names)  
     
+    if(!smd){
     message("\nError analysis of dints effects coding:\n")    
-    
+    } else { message("\nError analysis of 'outcome' and 'time' coding:\n")  }
     invisible(lapply(names(L), function(i) ctlist_maker(L[i], just_msg = TRUE, smd = smd)))
   } else {
     
-    message("\nError analysis of dints effects coding stopped due to the 'Error' found above.")
+    message("\nError analysis of stage 3 stopped due to the 'Error' found above.")
   }
 }
-
-
 
 #==========================================================================================================================================
 
