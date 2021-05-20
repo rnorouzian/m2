@@ -591,3 +591,114 @@ pcohen <- function(q, dbase = 0, n1, n2 = NA, lower.tail = TRUE, log.p = FALSE){
 p(q = q, dbase = dbase, n1 = n1, n2 = n2, lower.tail = lower.tail, log.p = log.p)
 }                     
                      
+#=========================================================================================================================================
+                     
+smd_maker <- function(data, m, ar, dot.names, raw = FALSE){
+  
+vec.names <- c('mT','sdT','nT','mC','sdC','nC')
+
+f <- function(m2, dot.names, vec.names){
+  
+  aa <- ctlist_maker(m2)
+  
+  b1 <- lapply(aa, function(x)  {
+    y <- do.call(rbind,  x);
+    y[order(y$group.name), c("mpre", "sdpre", "n", dot.names)] })
+  
+  cc1 <- do.call(cbind,rev(b1))
+  cc1 <- cc1[grep(sprintf("clist.(%s)", paste0(dot.names, collapse="|")), names(cc1), invert = TRUE)]
+  i1 <- grepl(sprintf("(%s)", paste0(dot.names, collapse="|")), names(cc1))
+  cc1 <- cbind(cc1[!i1], cc1[i1])
+  names(cc1)[1:6] <- vec.names
+  cc_1 <- cc1[!duplicated(cc1[vec.names]),]
+  cc_1 <- cbind(cc_1, time = 0)
+  
+  b2 <- lapply(aa, function(x)  {
+    y <- do.call(rbind,  x);
+    y[order(y$group.name), c("mpos", "sdpos", "n", dot.names)] })
+  
+  cc2 <- do.call(cbind,rev(b2))
+  cc2 <- cc2[grep(sprintf("clist.(%s)", paste0(dot.names, collapse="|")), names(cc2), invert = TRUE)]
+  i1 <- grepl(sprintf("(%s)", paste0(dot.names, collapse="|")), names(cc2))
+  cc2 <- cbind(cc2[!i1], cc2[i1])
+  names(cc2)[1:6] <- vec.names
+  cc_2 <- cc2[!duplicated(cc2[vec.names]),]
+  cc_2 <- transform(cc_2, time = tlist.post_id)
+  
+  out <- rbind(cc_1,cc_2, make.row.names = FALSE)
+  
+  out <- cbind(studyID = rep(names(m2), nrow(out)), out)
+  
+  fin <- setNames(out, sub("^tlist\\.", "", names(out)))
+  
+  fin[order(fin$time),]
+}
+
+LIST <- lapply(names(m), function(i) f(m2=m[i],dot.names=dot.names,vec.names=vec.names))
+
+DF <- do.call(rbind, c(LIST, make.row.names = FALSE))
+
+es_data <- cbind(esID = seq_len(nrow(DF)), DF)
+
+es <- metafor::escalc("SMD", m1i = mT, m2i = mC, sd1i = sdT, sd2i = sdC, n1i = nT, n2i = nC, data = es_data)
+
+output <- transform(es, yi = ifelse(sign_. == TRUE, -yi, yi)) 
+
+output <- drop.col(output, if(!raw) c(vec.names,"sign_.","post_id") else "post_id")
+
+output[c("studyID","esID","yi","vi", setdiff(names(output), c("studyID","esID","yi","vi")))]
+}      
+                   
+#=========================================================================================================================================   
+                   
+make_final_output <- function(data, m, ar, dot.names, smd = TRUE, smd_raw = FALSE){
+  
+  handle_mpre_errors(data, just_msg = FALSE)
+  
+  handle_prepos_errors(data, ar, dot.names, just_msg = FALSE) 
+  
+if(!smd){ 
+  
+  L <- get_d_prepos(data, m, ar, dot.names)
+  
+  res <- setNames(lapply(names(L), function(i) get_dint(L[i], dot.names)), names(L))
+  
+  DF <- do.call(rbind, c(Map(cbind, studyID = names(res), res), make.row.names = FALSE))
+  
+  out <- cbind(esID = seq_len(nrow(DF)), DF)
+  
+  out2 <- out[c("studyID","esID", setdiff(names(out), c("studyID","esID")))]
+  
+  drop.col(out2, "sign_.")
+  
+} else {
+  
+  smd_maker(data, m, ar, dot.names, raw = smd_raw)
+  
+   }
+}
+                         
+                         
+#=========================================================================================================================================                         
+                         
+dint <- function(data, check_sheet = FALSE, smd = FALSE, smd_raw = FALSE){
+  
+  ar <- formalArgs(d.prepos)[-c(3,21)] # [-c(3,21:22)] # 
+  
+  data <- check_data_(data, ar, smd = smd)
+  
+  m <- split(data, data$study.name)
+  
+  all_names_ <- names(data)
+  
+  dot.names <- all_names_[!all_names_ %in% ar]
+  
+  if(check_sheet){
+    
+    check_sheet(data, m, ar, dot.names)
+    
+  } else {
+    
+    make_final_output(data, m, ar, dot.names, smd = smd, smd_raw = smd_raw)
+  }
+}                         
