@@ -368,11 +368,11 @@ d_prepo <- function(data = NULL, ar, dot.names)
 #==========================================================================================================================================
 
 
-handle_prepos_errors <- function(data, ar, dot.names, just_msg = TRUE){
+handle_prepos_errors <- function(data, ar, dot.names, just_msg = TRUE, smd = FALSE){
   
   L <- split(data, data$study.name)  
   
-  f1 <- function(number){
+  f1 <- function(number, smd = FALSE){
     
     ns <- names(L)[number]
     
@@ -382,13 +382,26 @@ handle_prepos_errors <- function(data, ar, dot.names, just_msg = TRUE){
     if(inherits(z, "try-error")) { 
       
       Attrib <- TRUE
-    message("Error: pre-post coding issues in ", toString(dQuote(ns)), " detected. Check all the columns ('n','mpre'...).")
-    
+      
+      if(!smd){
+      message("Error: pre-post coding issues in ", toString(dQuote(ns)), " detected. Check all the columns ('n','mpre'...).")
       } else {
         
-      Attrib <- FALSE
-    cat(paste("Ok: No pre-post coding issues in", toString(dQuote(ns)), "detected.\n"))
+      message("Error: coding issues in ", toString(dQuote(ns)), " detected. Check all the columns ('n','mpre'...).")
       }
+        
+    } else {
+      
+      Attrib <- FALSE
+      
+      if(!smd){
+      cat(paste("Ok: No pre-post coding issues in", toString(dQuote(ns)), "detected.\n"))
+      } else { 
+        
+      cat(paste("Ok: No descriptive coding issues in", toString(dQuote(ns)), "detected.\n"))
+        
+        }
+    }
     
     y <- NA
     attr(y, "message") <- Attrib
@@ -396,7 +409,7 @@ handle_prepos_errors <- function(data, ar, dot.names, just_msg = TRUE){
   }
   
   
-  f2 <- function(number){
+  f2 <- function(number, smd = FALSE){
     
     ns <- names(L)[number]
     
@@ -404,39 +417,42 @@ handle_prepos_errors <- function(data, ar, dot.names, just_msg = TRUE){
     
     if(inherits(z, "try-error")) { 
       
-    stop("pre-post coding issues in ", toString(dQuote(ns)), " detected. Check all the columns ('n','mpre'...).", call. = FALSE)
-    }    
-}  
-  
+      if(!smd){
+      stop("pre-post coding issues in ", toString(dQuote(ns)), " detected. Check all the columns ('n','mpre'...).", call. = FALSE)
+      } else {
+        
+      stop("coding issues in ", toString(dQuote(ns)), " detected. Check all the columns ('n','mpre'...).", call. = FALSE)
+      }
+        }    
+  }  
   
   if(just_msg){
-  
-  res <- invisible(lapply(seq_along(L), function(i) f1(i)))
-  
-  any(sapply(res, attr, "message"))
- }  
+    
+    res <- invisible(lapply(seq_along(L), function(i) f1(i, smd = smd)))
+    
+    any(sapply(res, attr, "message"))
+  }  
   else {
     
-  invisible(lapply(seq_along(L), function(i) f2(i)))
+    invisible(lapply(seq_along(L), function(i) f2(i, smd = smd)))
   } 
   
 }
 
 
-
 #==========================================================================================================================================
 
-check_sheet <- function(data, m, ar, dot.names){
+check_sheet <- function(data, m, ar, dot.names, smd = FALSE){
   
   message(paste("\nError analysis of multi-outcome study coding:\n"))
   
   bad_1st_check <- handle_mpre_errors(data)
   
   if(!bad_1st_check){
-  
-  message(paste("\nError analysis of pre-post effects coding:\n"))
-  
-  bad_2nd_check <- handle_prepos_errors(data, ar, dot.names)
+    
+    message(paste("\nError analysis of pre-post effects coding:\n"))
+    
+    bad_2nd_check <- handle_prepos_errors(data, ar, dot.names, smd = smd)
     
   } else { bad_2nd_check <- TRUE
   
@@ -455,6 +471,7 @@ check_sheet <- function(data, m, ar, dot.names){
     message("\nError analysis of dints effects coding stopped due to the 'Error' found above.")
   }
 }
+
 
 
 #==========================================================================================================================================
