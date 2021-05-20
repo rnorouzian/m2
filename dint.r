@@ -476,11 +476,13 @@ check_sheet <- function(data, m, ar, dot.names, smd = FALSE){
 
 #==========================================================================================================================================
 
-make_final_output <- function(data, m, ar, dot.names){
+make_final_output <- function(data, m, ar, dot.names, smd = FALSE, smd_raw = TRUE){
   
   handle_mpre_errors(data, just_msg = FALSE)
   
-  handle_prepos_errors(data, ar, dot.names, just_msg = FALSE)  
+  handle_prepos_errors(data, ar, dot.names, just_msg = FALSE, smd = smd) 
+  
+if(!smd){ 
   
   L <- get_d_prepos(data, m, ar, dot.names)
   
@@ -490,7 +492,15 @@ make_final_output <- function(data, m, ar, dot.names){
   
   out <- cbind(esID = seq_len(nrow(DF)), DF)
   
-  out[c("studyID","esID", setdiff(names(out), c("studyID","esID")))]
+  out2 <- out[c("studyID","esID", setdiff(names(out), c("studyID","esID")))]
+  
+  drop.col(out2, "sign_.")
+  
+} else {
+  
+  smd_maker(data, m, ar, dot.names, raw = smd_raw)
+  
+   }
 }
 
 
@@ -668,11 +678,11 @@ output[c("studyID","esID","yi","vi", setdiff(names(output), c("studyID","esID","
                    
 #=========================================================================================================================================   
                    
-make_final_output <- function(data, m, ar, dot.names, smd = TRUE, smd_raw = FALSE){
+make_final_output <- function(data, m, ar, dot.names, smd = FALSE, smd_raw = TRUE){
   
   handle_mpre_errors(data, just_msg = FALSE)
   
-  handle_prepos_errors(data, ar, dot.names, just_msg = FALSE) 
+  handle_prepos_errors(data, ar, dot.names, just_msg = FALSE, smd = smd) 
   
 if(!smd){ 
   
@@ -695,10 +705,9 @@ if(!smd){
    }
 }
                          
-                         
 #=========================================================================================================================================                         
                          
-dint <- function(data, check_sheet = FALSE, smd = FALSE, smd_raw = FALSE){
+dint <- function(data, check_sheet = FALSE, smd = FALSE, smd_raw = TRUE){
   
   ar <- formalArgs(d.prepos)[-c(3,21)] # [-c(3,21:22)] # 
   
@@ -712,10 +721,10 @@ dint <- function(data, check_sheet = FALSE, smd = FALSE, smd_raw = FALSE){
   
   if(check_sheet){
     
-    check_sheet(data, m, ar, dot.names)
+    check_sheet(data, m, ar, dot.names, smd = smd)
     
   } else {
     
     make_final_output(data, m, ar, dot.names, smd = smd, smd_raw = smd_raw)
   }
-}                         
+}                       
