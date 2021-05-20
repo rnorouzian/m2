@@ -134,33 +134,47 @@ drop.col <- function(data, what){
            
            
 handle_mpre_errors <- function(data, just_msg = TRUE){
-
-out <- invisible(sapply(split(data, data$study.name), function(x) {
-  if (var(x[,'post']) > 0) {
-    r <- all(sapply(unique(x[,'outcome']), function(i)
-      var(x[x[,'outcome'] == i & x[,'control'], 'mpre']) > 0))
-  } else {
-    r <- FALSE
-  }
-  if(r) {
-    
-    if(just_msg) {
-      
-      message(sprintf("Error: 'mpre' in '%s' for 'control' and 'outcome' rows are wrongly coded.", x[,'study.name'][1]))
-    
-    } else {
-      
-      stop(sprintf("'mpre' in '%s' for 'control' and 'outcome' rows are wrongly coded.", x[,'study.name'][1]), call. = FALSE)
-    }
-  } else if(just_msg) { 
-    
-  cat(paste("OK: No multi-outcome coding issues in",dQuote(toString(x[,'study.name'][1])),"detected.\n")) }
   
-  return(r)
-}))
+  out <- lapply(split(data, data$study.name), function(x){
+    pos_constant <- length(unique(x$post)) == 1L
+    if (!pos_constant) {
+      r_lst <- lapply(split(x, x$outcome), function(x_sub){
+        mps <- x_sub[x_sub$control==TRUE,"mpre"]
+        sps <- x_sub[x_sub$control==TRUE,"sdpre"]
+        mps_constant <- length(unique(mps)) %in% c(1L,0L)
+        sps_constant <- length(unique(sps)) %in% c(1L,0L)
+        r <- !mps_constant || !sps_constant
+        
+        return(r)
+      })
+      r <- any(unlist(r_lst))
+      if (r) {
+        
+        if(just_msg) {
+          
+          message(sprintf("Error: 'mpre' in '%s' for 'control' and 'outcome' rows are wrongly coded.", x[,'study.name'][1]))
+          
+        } else {
+          
+          stop(sprintf("'mpre' in '%s' for 'control' and 'outcome' rows are wrongly coded.", x[,'study.name'][1]), call. = FALSE)
+          
+        }
+      } else if(just_msg) { 
+        
+        cat(sprintf("OK: No multi-outcome coding issues in '%s' detected.\n",x[,"study.name"][1])) 
+        
+      } 
 
-if(just_msg) any(out)
-}           
+    } else if(just_msg) { 
+      
+      cat(sprintf("OK: No multi-outcome coding issues in '%s' detected.\n",x[,"study.name"][1])) 
+      return(FALSE)
+      
+    }
+  })
+  
+  if(just_msg) invisible(any(unlist(out)))
+}
            
            
 #================================================================================================================================
