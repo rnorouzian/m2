@@ -281,7 +281,8 @@ d.prepos <- function(d.pair = NA, study.name = NA, group.name = NA, n = NA, mdif
   
   rev.group <- ifelse(is.na(rev.group), FALSE, rev.group)
   autoreg <- ifelse(is.na(autoreg), FALSE, autoreg)
-  
+  rev.sign <- ifelse(is.na(rev.sign), FALSE, rev.sign)
+    
   if(anyNA(post) || anyNA(outcome)) stop("'post' or 'outcome' missing in the EXCEL coding sheet.", call. = FALSE)
   
   d <- d.pair
