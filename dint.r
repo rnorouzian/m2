@@ -520,32 +520,6 @@ check_data_ <- function(data, ar, smd = FALSE){
 }
 
 
-#==========================================================================================================================================
-
-
-dint <- function(data, check_sheet = FALSE){
-  
-  ar <- formalArgs(d.prepos)[-c(3,21)] # [-c(3,21:22)] # 
-    
-  data <- check_data_(data, ar)
-  
-  m <- split(data, data$study.name)
-  
-  all_names_ <- names(data)
-  
-  dot.names <- all_names_[!all_names_ %in% ar]
-  
-  if(check_sheet){
-    
-   check_sheet(data, m, ar, dot.names)
-  
-  } else {
-    
-   make_final_output(data, m, ar, dot.names)
-  }
-}
-                         
-
 #==========================================================================================================================================                         
                          
 Type_of_Input_ <- c(
