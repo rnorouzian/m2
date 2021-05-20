@@ -179,7 +179,7 @@ handle_mpre_errors <- function(data, just_msg = TRUE){
            
 #================================================================================================================================
            
-handle_dint_errors <- function(res, just_msg = FALSE) {
+handle_dint_errors <- function(res, just_msg = FALSE, smd = FALSE) {
   
   dat_obj <- data.frame(control = sapply(res[[1]][[1]], nrow), treatment = sapply(res[[2]][[1]], nrow))
   
@@ -187,7 +187,7 @@ handle_dint_errors <- function(res, just_msg = FALSE) {
     if(!any(rowSums(dat_obj == 0) == 1)){
       
       message("Note: ",dQuote(toString(names(res$tlist))),
-                    " missing some 'post','outcome' or 'control' row(s).")
+              " missing some 'post','outcome' or 'control' row(s).")
       
       if(!just_msg){ 
         return(
@@ -241,7 +241,13 @@ handle_dint_errors <- function(res, just_msg = FALSE) {
         ) 
       } else {
         
-         cat(paste("OK: No dint coding issues in",dQuote(toString(names(res$tlist))),"detected.\n"))
+        if(!smd){
+        cat(paste("OK: No dint coding issues in",dQuote(toString(names(res$tlist))),"detected.\n"))
+        } else {
+          
+        cat(paste("OK: No 'time', 'outcome' coding issues in",dQuote(toString(names(res$tlist))),"detected.\n"))
+          
+        }
       }
     }
   }
@@ -250,7 +256,7 @@ handle_dint_errors <- function(res, just_msg = FALSE) {
 
 #=============================================================================================================================
 
-ctlist_maker <- function(m, just_msg = FALSE){
+ctlist_maker <- function(m, just_msg = FALSE, smd = FALSE){
   
   input <- setNames(lapply(m, function(i) 
     rev(expand.grid(outcome = seq_len(max(i$outcome, na.rm = TRUE)), 
@@ -261,7 +267,7 @@ ctlist_maker <- function(m, just_msg = FALSE){
       x[x$control == i & x$post == p & x$outcome == o, , drop = FALSE])),
     inp$post, inp$outcome))), c("clist", "tlist"))
   
-  handle_dint_errors(res, just_msg = just_msg)
+  handle_dint_errors(res, just_msg = just_msg, smd = smd)
 }
 
 #=============================================================================================================================
@@ -465,7 +471,7 @@ check_sheet <- function(data, m, ar, dot.names, smd = FALSE){
     
     message("\nError analysis of dints effects coding:\n")    
     
-    invisible(lapply(names(L), function(i) ctlist_maker(L[i], just_msg = TRUE)))
+    invisible(lapply(names(L), function(i) ctlist_maker(L[i], just_msg = TRUE, smd = smd)))
   } else {
     
     message("\nError analysis of dints effects coding stopped due to the 'Error' found above.")
